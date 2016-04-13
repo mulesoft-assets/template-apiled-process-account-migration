@@ -1,0 +1,13 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "dataType": "UNKNOWN",
+            "metaDataModelPropertiesManager": {
+                "properties": []
+            }
+        }
+    },
+    "outputMessageMetadata": {},
+    "id": "21a13388-e059-4666-a53b-bb4adc9b91ed",
+    "version": "5.2.0.0"
+}
