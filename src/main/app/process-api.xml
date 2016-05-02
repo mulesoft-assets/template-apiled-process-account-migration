@@ -32,7 +32,7 @@ payload map $]]></dw:set-payload>
                 <processor-chain doc:name="Processor Chain">
                     <http:request config-ref="HTTP_Request_Configuration_Source_B" path="/accounts/{id}" method="GET" metadata:id="21a13388-e059-4666-a53b-bb4adc9b91ed" doc:name="Get the account with specific ID">
                         <http:request-builder>
-                            <http:uri-param paramName="id" value="#{#[payload.id]"/>
+                            <http:uri-param paramName="id" value="#[payload.id]"/>
 
                         </http:request-builder>
                         <http:success-status-code-validator values="200,404"/>
@@ -54,11 +54,11 @@ payload.id]]></dw:set-payload>
                             <http:uri-param paramName="id" value="#[flowVars.accountId]"/>
                         </http:request-builder>
                     </http:request>
-                    <logger message="Account with ID #[flowVars.customerId] was updated successfully." level="INFO" doc:name="Log the update"/>
+                    <logger message="Account with ID #[flowVars.accountId] was updated successfully." level="INFO" doc:name="Log the update"/>
                 </when>
                 <otherwise>
                     <http:request config-ref="HTTP_Request_Configuration_Source_B" path="/accounts" method="POST" doc:name="Create account"/>
-                    <dw:transform-message doc:name="Transform Message">
+                    <dw:transform-message doc:name="Get ID of the new customer">
                         <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---
@@ -81,7 +81,7 @@ payload.id]]></dw:set-payload>
     <flow name="post:/migrateAccountsB:process-api-config">
         <http:request config-ref="HTTP_Request_Configuration_Source_A" path="/accounts" method="GET" doc:name="Get account from specified date">
             <http:request-builder>
-                <http:query-param paramName="modifiedAfter" value="#[message.inboundProperties..'http.query.params'.'modifiedAfter']"/>
+                <http:query-param paramName="modifiedAfter" value="#[message.inboundProperties.'http.query.params'.get(&quot;modifiedAfter&quot;)]"/>
             </http:request-builder>
         </http:request>
         <dw:transform-message doc:name="Transform response to array of Accounts">
@@ -110,17 +110,17 @@ payload.id]]></dw:set-payload>
             </enricher>
             <json:object-to-json-transformer doc:name="Object to JSON"/>
             <choice doc:name="Does Account exists?">
-                <when expression="">
+                <when expression="#[flowVars.accountId != null]">
                     <http:request config-ref="HTTP_Request_Configuration_Source_B" path="/accounts/{id}" method="PUT" doc:name="Update account">
                         <http:request-builder>
                             <http:uri-param paramName="id" value="#[flowVars.accountId]"/>
                         </http:request-builder>
                     </http:request>
-                    <logger message="Account with ID #[flowVars.customerId] was updated successfully." level="INFO" doc:name="Log the update"/>
+                    <logger message="Account with ID #[flowVars.accountId] was updated successfully." level="INFO" doc:name="Log the update"/>
                 </when>
                 <otherwise>
                     <http:request config-ref="HTTP_Request_Configuration_Source_B" path="/accounts" method="POST" doc:name="Create account"/>
-                    <dw:transform-message doc:name="Transform Message">
+                    <dw:transform-message doc:name="Get ID of the new customer">
                         <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---

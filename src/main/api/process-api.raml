@@ -1,5 +1,5 @@
 #%RAML 0.8
-title: System API
+title: Process API
 version: v1.0
 
 schemas:
@@ -9,23 +9,6 @@ traits: !include ./traits/trait-collection.yaml
 
 /migrateAccounts:
   displayName: migrateAccounts
-  post:
-    description: |
-      Migrate all accounts on the input
-    body:
-      application/json:
-        example: !include ./examples/account_collection_example.json
-    responses:
-      201:
-        description: Migrated
-        body:
-          application/json:
-            example: |
-              {
-                "message": "Accounts were successfully migrated."
-              }
-/migrateAccountsB:
-  displayName: migrateAccountsB
   post:
     description: |
       Migrate accounts from A instance to B instance
