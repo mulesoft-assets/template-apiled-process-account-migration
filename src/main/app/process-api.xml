@@ -8,11 +8,11 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
     <apikit:config name="process-api-config" raml="process-api.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
-    <http:request-config name="HTTP_Request_Configuration_Source_B" host="0.0.0.0" port="${system.api.http.port}" doc:name="HTTP Request Configuration" basePath="${system.api.basePath}">
+    <http:request-config name="HTTP_Request_Configuration_Source_B" host="#[flowVars.destinationHost]" port="#[flowVars.destinationPort]" doc:name="HTTP Request Configuration" basePath="${system.api.basePath}">
         <http:raml-api-configuration location="system-api.raml"/>
     </http:request-config>
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration"/>
-    <http:request-config name="HTTP_Request_Configuration_Source_A" host="0.0.0.0" port="${system.api.a.http.port}" doc:name="HTTP Request Configuration" basePath="${system.api.a.basePath}">
+    <http:request-config name="HTTP_Request_Configuration_Source_A" host="#[flowVars.sourceHost]" port="#[flowVars.sourcePort]" doc:name="HTTP Request Configuration" basePath="${system.api.basePath}">
         <http:raml-api-configuration location="system-api.raml"/>
     </http:request-config>
     <flow name="process-api-main">
@@ -21,6 +21,25 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
         <exception-strategy ref="process-api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
     <flow name="post:/migrateAccounts:process-api-config">
+        <dw:transform-message doc:name="Get source and destination system configuration">
+            <dw:set-variable variableName="destinationHost"><![CDATA[%dw 1.0
+%output application/java
+---
+inboundProperties."http.query.params".destinationHost]]></dw:set-variable>
+            <dw:set-variable variableName="sourcePort"><![CDATA[%dw 1.0
+%output application/java
+---
+inboundProperties."http.query.params".sourcePort]]></dw:set-variable>
+            <dw:set-variable variableName="destinationPort"><![CDATA[%dw 1.0
+%output application/java
+---
+inboundProperties."http.query.params".destinationPort]]></dw:set-variable>
+            <dw:set-variable variableName="sourceHost"><![CDATA[%dw 1.0
+%output application/java
+---
+inboundProperties."http.query.params".sourceHost]]></dw:set-variable>
+        </dw:transform-message>
+
         <http:request config-ref="HTTP_Request_Configuration_Source_A" path="/accounts" method="GET" doc:name="Get account from specified date">
             <http:request-builder>
                 <http:query-param paramName="modifiedAfter" value="#[message.inboundProperties.'http.query.params'.get(&quot;modifiedAfter&quot;)]"/>

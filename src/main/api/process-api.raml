@@ -18,6 +18,22 @@ traits: !include ./traits/trait-collection.yaml
         minLength: 23
         maxLength: 29
         example: 2016-03-24T14:00:00.000+01:00
+      sourceHost:
+        displayName: Source system host
+        required: true
+        example: localhost
+      sourcePort:
+        displayName: Source system port
+        required: true
+        example: 8083
+      destinationHost:
+        displayName: Destination system host
+        required: true
+        example: localhost
+      destinationPort:
+        displayName: Destination system port
+        required: true
+        example: 8084
     responses:
       201:
         description: Migrated
