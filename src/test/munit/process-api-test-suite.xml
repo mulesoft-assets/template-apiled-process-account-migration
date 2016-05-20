@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration" mock-connectors="false" mock-inbounds="false"/>
+    <context:property-placeholder location="mule.test.properties" />
+    <spring:beans>
+        <spring:import resource="classpath:process-api.xml"/>
+    </spring:beans>
+    <http:request-config name="HTTP_Request_Configuration" host="0.0.0.0" port="${http.port}" basePath="${api.basePath}" doc:name="HTTP Request Configuration"/>
+    <munit:test name="process-api-test-suite-post:/migrateAccounts:process-api-configTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock the get for input data">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Get account from specified date']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[org.mule.util.IOUtils.getResourceAsString('account_collection_example.json', null)]" mimeType="application/json"/>
+        </mock:when>
+        <mock:when messageProcessor=".*:.*" doc:name="Mock get of the existing account">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Get the account with specific ID']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[{}]"/>
+        </mock:when>
+        <mock:when messageProcessor=".*:.*" doc:name="Mock the create account operation">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Create account']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[{&quot;id&quot;: 12345}]"/>
+        </mock:when>
+        <mock:spy messageProcessor=".*:.*" doc:name="Spy the DW transformation">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Get ID of the new customer']"/>
+            </mock:with-attributes>
+            <mock:assertions-after-call>
+                <munit:assert-on-equals message="Payload should contains new user ID." expectedValue="#[12345]" actualValue="#[payload]" doc:name="Assert that new user ID is equals to mocked one."/>
+            </mock:assertions-after-call>
+        </mock:spy>
+        <http:request config-ref="HTTP_Request_Configuration" path="/migrateAccounts" method="POST" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-param paramName="modifiedAfter" value="2016-03-24T14:00:00.000+01:00"/>
+            </http:request-builder>
+        </http:request>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify that enricher was called just once">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Set the accountId']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(201))]" doc:name="Assert that http.status eq 200"/>
+        <dw:transform-message doc:name="Extract message from payload">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.message]]></dw:set-payload>
+        </dw:transform-message>
+        <munit:assert-on-equals message="There should be sucessful status message in the payload!" expectedValue="#[&quot;Accounts were successfully migrated.&quot;]" actualValue="#[payload]" doc:name="There should be sucessful status message in the payload"/>
+        
+    </munit:test>
+</mule>
