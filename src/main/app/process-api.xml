@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+<mule xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
@@ -7,14 +9,17 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+	<context:property-placeholder location="common.properties, mule.${mule.env}.properties" />
     <apikit:config name="process-api-config" raml="process-api.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
-    <http:request-config name="HTTP_Request_Configuration_Source_B" host="0.0.0.0" port="${system.api.b.http.port}" doc:name="HTTP Request Configuration" basePath="${system.api.b.basePath}">
+    <http:request-config name="HTTP_Request_Configuration_Source_B" host="${system.api.b.domain}" port="${system.api.b.http.port}" doc:name="HTTP Request Configuration" basePath="${system.api.b.basePath}">
         <http:raml-api-configuration location="system-api.raml"/>
+
 
     </http:request-config>
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration" basePath="${api.basePath}"/>
-    <http:request-config name="HTTP_Request_Configuration_Source_A" host="0.0.0.0" port="${system.api.a.http.port}" doc:name="HTTP Request Configuration" basePath="${system.api.a.basePath}">
+    <http:request-config name="HTTP_Request_Configuration_Source_A" host="${system.api.a.domain}" port="${system.api.a.http.port}" doc:name="HTTP Request Configuration" basePath="${system.api.a.basePath}">
         <http:raml-api-configuration location="system-api.raml"/>
+
     </http:request-config>
     <flow name="process-api-main">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/*" doc:name="HTTP"/>
@@ -36,9 +41,10 @@ payload map $]]></dw:set-payload>
         <foreach collection="#[payload]" doc:name="For Each Account">
             <enricher source="#[payload]" target="#[flowVars.accountId]" doc:name="Set the accountId">
                 <processor-chain doc:name="Processor Chain">
-                    <http:request config-ref="HTTP_Request_Configuration_Source_B" path="/accounts/{id}" method="GET" metadata:id="21a13388-e059-4666-a53b-bb4adc9b91ed" doc:name="Get the account with specific ID">
+                    <http:request config-ref="HTTP_Request_Configuration_Source_B" path="/accounts/{id}" method="DELETE" metadata:id="21a13388-e059-4666-a53b-bb4adc9b91ed" doc:name="Get the account with specific ID">
                         <http:request-builder>
                             <http:uri-param paramName="id" value="#[payload.id]"/>
+
                         </http:request-builder>
                         <http:success-status-code-validator values="200,404"/>
                     </http:request>

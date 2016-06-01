@@ -11,7 +11,6 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
     <munit:config name="munit" doc:name="MUnit configuration" mock-connectors="false" mock-inbounds="false"/>
-    <context:property-placeholder location="mule.test.properties" />
     <spring:beans>
         <spring:import resource="classpath:process-api.xml"/>
     </spring:beans>
@@ -46,12 +45,14 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
         <http:request config-ref="HTTP_Request_Configuration" path="/migrateAccounts" method="POST" doc:name="HTTP">
             <http:request-builder>
                 <http:query-param paramName="modifiedAfter" value="2016-03-24T14:00:00.000+01:00"/>
+
             </http:request-builder>
         </http:request>
         <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify that enricher was called just once">
             <mock:with-attributes>
                 <mock:with-attribute name="doc:name" whereValue="#['Set the accountId']"/>
             </mock:with-attributes>
+
         </mock:verify-call>
         <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(201))]" doc:name="Assert that http.status eq 200"/>
         <dw:transform-message doc:name="Extract message from payload">
