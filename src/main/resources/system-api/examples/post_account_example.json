@@ -1,10 +1,8 @@
 {
-  "id": "20a5ea46-a4ee-4542-93f4-9040a4ec078b",
-  "nativeId": "",
-  "name": "Jason Bourne",
+  "nativeId": "1a2b3c4d",
+  "name": "Eduard Walker",
   "phone": "1-(318)596-8473",
-  "email": "test@example.com",
-  "createdDate" : "2016-03-24T15:00:00.000Z",
+  "email": "ewalker0@liveinternet.ru",
   "billingStreet": "Pleasure 4598",
   "billingCity": "Shreveport",
   "billingState": "Louisiana",
@@ -15,6 +13,4 @@
   "shippingState": "Mississippi",
   "shippingPostalCode": "39204",
   "shippingCountry": "United States"
-  "lastModifiedDate" : "2016-03-24T15:00:00.000Z",
-  "lastModifiedById" : "123456"
 }
