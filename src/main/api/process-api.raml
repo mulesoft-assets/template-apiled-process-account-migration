@@ -1,11 +1,14 @@
-#%RAML 0.8
+#%RAML 1.0
 title: Process API
-version: v1.0
+version: v2.0
 
-schemas:
-  - account: !include schemas/account_schema.json
+types:
+  account: !include dataTypes/Account.raml
+  errorResponse: !include dataTypes/ErrorResponse.raml
+  successResponse: !include dataTypes/SuccessResponse.raml
 
-traits: !include ./traits/trait-collection.yaml
+traits:
+  accountSearch: !include ./traits/trait-collection.raml
 
 /migrateAccounts:
   displayName: migrateAccounts
