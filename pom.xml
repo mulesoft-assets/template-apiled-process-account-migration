@@ -1,157 +1,86 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.mule.templates</groupId>
-	<artifactId>template-apiled-process-account-migration</artifactId>
-    <version>1.3.2-SNAPSHOT</version>
-    <packaging>mule</packaging>
-	<name>template-apiled-process-account-migration</name>
-	
-	<parent>
-		<groupId>org.mule.templates</groupId>
-		<artifactId>templates-tooling-parent-pom</artifactId>
-		<version>1.3.7</version>
-	</parent>
 
-	<scm>
-		<connection>scm:git:https://github.com/mulesoft/template-apiled-process-account-migration.git</connection>
-		<developerConnection>scm:git:https://github.com/mulesoft/template-apiled-process-account-migration.git</developerConnection>
-		<url>https://github.com/mulesoft/template-apiled-process-account-migration</url>
-		<tag>HEAD</tag>
-	</scm>
-	
-	<properties>
-		<skip.readme.generation>true</skip.readme.generation>
+	<groupId>com.mycompany</groupId>
+	<artifactId>apiled-process-account-migration-api</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>mule-application</packaging>
+
+	<name>apiled-process-account-migration-api</name>
+
+    <properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<app.runtime>4.1.2</app.runtime>
+		<mule.maven.plugin.version>3.1.2</mule.maven.plugin.version>
 	</properties>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.mule.tools</groupId>
-				<artifactId>maven-mule-plugin</artifactId>
+				<groupId>org.mule.tools.maven</groupId>
+				<artifactId>mule-maven-plugin</artifactId>
+				<version>${mule.maven.plugin.version}</version>
+				<extensions>true</extensions>
 				<configuration>
-					<copyToAppsDirectory>true</copyToAppsDirectory>
-					<inclusions>
-						<inclusion>
-							<groupId>org.mule.modules</groupId>
-							<artifactId>mule-module-apikit</artifactId>
-						</inclusion>
-						<inclusion>
-							<groupId>org.mule.modules</groupId>
-							<artifactId>mule-module-sfdc</artifactId>
-						</inclusion>
-					</inclusions>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.mulesoft.munit.tools</groupId>
-				<artifactId>munit-maven-plugin</artifactId>
-				<version>${munit.version}</version>
-				<executions>
-					<execution>
-						<id>test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>test</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<dynamicPorts>
-						<dynamicPort>http.port</dynamicPort>
-					</dynamicPorts>
-					<coverage>
-						<runCoverage>true</runCoverage>
-						<formats>
-							<format>html</format>
-						</formats>
-					</coverage>
 				</configuration>
 			</plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/api/</directory>
-			</resource>
-			<resource>
-				<directory>src/main/resources/</directory>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<directory>src/test/munit</directory>
-			</testResource>
-			<testResource>
-				<directory>src/test/resources</directory>
-			</testResource>
-		</testResources>
 	</build>
 
-	<!-- Mule Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>org.mule.tests</groupId>
-			<artifactId>mule-tests-functional</artifactId>
-			<version>${mule.version}</version>
-			<scope>test</scope>
-		</dependency>
-	<dependency>
             <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-apikit</artifactId>
-            <version>${mule.version}</version>
+            <artifactId>mule-apikit-module</artifactId>
+            <version>1.1.1</version>
+            <classifier>mule-plugin</classifier>
         </dependency>
-    <dependency>
+    	<dependency>
             <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-spring-config</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
+            <artifactId>mule-validation-module</artifactId>
+            <version>1.2.1</version>
+            <classifier>mule-plugin</classifier>
         </dependency>
-    <dependency>
-            <groupId>com.mulesoft.weave</groupId>
-            <artifactId>mule-plugin-weave</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
+    	<dependency>
+            <groupId>5cf40e45-259b-4c6f-b047-c318f237c759.industry-co</groupId>
+            <artifactId>accounts-system-api-p1</artifactId>
+            <version>1.0.4</version>
+            <classifier>mule-plugin</classifier>
         </dependency>
-    <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-http</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
+    	<dependency>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-http-connector</artifactId>
+            <version>1.2.1</version>
+            <classifier>mule-plugin</classifier>
         </dependency>
-    <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-json</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    <dependency>
-			<groupId>com.mulesoft.munit</groupId>
-			<artifactId>mule-munit-support</artifactId>
-			<version>${mule.munit.support.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.mulesoft.munit</groupId>
-			<artifactId>munit-runner</artifactId>
-			<version>${munit.version}</version>
-			<scope>test</scope>
-		</dependency>
     </dependencies>
 
 	<repositories>
+          <repository>
+            <id>anypoint-exchange</id>
+            <name>Anypoint Exchange</name>
+            <url>https://maven.anypoint.mulesoft.com/api/v1/maven</url>
+            <layout>default</layout>
+        </repository>
         <repository>
-			<id>mulesoft-releases</id>
-			<name>MuleSoft Releases Repository</name>
-			<url>https://repository.mulesoft.org/nexus/content/repositories/releases/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>mule-ee-releases</id>
-			<name>MuleSoft Releases EE Repository</name>
-			<url>https://repository.mulesoft.org/nexus/content/repositories/releases-ee/</url>
-			<layout>default</layout>
-		</repository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>https://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>mulesoft-releases</id>
+            <name>mulesoft release repository</name>
+            <layout>default</layout>
+            <url>https://repository.mulesoft.org/releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

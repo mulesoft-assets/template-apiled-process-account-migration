@@ -1,0 +1,26 @@
+{
+  "configs": [
+    "account-migration-process-api.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "apiled-process-account-migration-api",
+  "minMuleVersion": "4.1.2",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "api/.gitignore",
+        "api/account-migration-process-api.raml",
+        "api/schemas/account_schema.json",
+        "api/traits/trait-collection.yaml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

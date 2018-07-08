@@ -1,0 +1,13 @@
+{
+	"id": "EDICUST",
+	"name": "Stauder",
+	"billingAddress": {
+		"street": null,
+		"city": "Berlin",
+		"postalCode": "10000",
+		"state": null,
+		"country": "DE"
+	},
+	"lastModifiedDate": "2002-09-09T00:00:00Z",
+	"lastModifiedById": null
+}
