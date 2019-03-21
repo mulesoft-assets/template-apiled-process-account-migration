@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:account-sfdcsystem-api="http://www.mulesoft.org/schema/mule/account-sfdcsystem-api" 
+xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" 
+xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" 
+xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/account-sfdcsystem-api http://www.mulesoft.org/schema/mule/account-sfdcsystem-api/current/mule-account-sfdcsystem-api.xsd">
+    <global-property doc:name="Global Property" name="mule.env" value="dev" />
+    <configuration-properties doc:name="Configuration properties" doc:id="4dc55a2f-6988-4b41-91e3-d7c396a8d70e" file="common.properties" />
+    <configuration-properties doc:name="Configuration properties" doc:id="e463cda4-81a8-4e35-80f9-0d4112b9b094" file="mule.${mule.env}.properties" />
+    <http:listener-config name="account-migration-process-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
+    </http:listener-config>
+    <apikit:config name="account-migration-process-api-config" raml="account-migration-process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<account-sfdcsystem-api:config name="Account_SFDC_System_A_API_Config" doc:name="Account SFDC System API Config" doc:id="ed13d5d7-75f4-4266-9615-5f0ba7f37907" property_host="${system.api.a.domain}" property_port="${system.api.a.http.port}" property_basePath="${system.api.a.basePath}" property_protocol="${system.api.a.protocol}" />
+	<account-sfdcsystem-api:config name="Account_SFDC_System_B_API_Config" doc:name="Account SFDC System API Config" doc:id="1810ef55-3595-4199-974e-d0ab46066090" property_host="${system.api.b.domain}" property_port="${system.api.b.http.port}" property_basePath="${system.api.b.basePath}" property_protocol="${system.api.b.protocol}" />
+	<flow name="account-migration-process-api-main">
+        <http:listener config-ref="account-migration-process-api-httpListenerConfig" path="${api.basePath}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="account-migration-process-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="472cd5e7-f17f-40ee-94ae-136c94c0c6f7">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="1ae7c445-d030-4a38-bf14-842ce545af4c">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="account-migration-process-api-console">
+        <http:listener config-ref="account-migration-process-api-httpListenerConfig" path="${console.basePath}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="account-migration-process-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+	<flow name="post:\migrateAccounts:account-migration-process-api-config">
+		<account-sfdcsystem-api:get-accounts doc:name="Get account from system A by name" doc:id="556b348a-0847-482a-a51e-b2d2d05ce6dc" config-ref="Account_SFDC_System_A_API_Config" name="#[attributes.queryParams.name]" />
+		<foreach doc:name="For Each Account in system A" doc:id="91f00bae-1849-4dba-a3f6-0079367f2e21" collection="#[payload]">
+			<ee:transform doc:name="Remove unused and null items" doc:id="939085f5-20fb-4ce8-bdde-1a7e2e14a72c">
+				<ee:message>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="dataForUpsert" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  ("nativeId": payload.nativeId) if payload.nativeId != null,
+  "name": payload.name,
+  ("email": payload.email) if payload.email != null,
+  ("phone": payload.phone) if payload.phone != null,
+  "billingAddress": {
+    ("street": payload.billingAddress.street) if payload.billingAddress.street != null,
+    ("city": payload.billingAddress.city) if payload.billingAddress.city != null,
+    ("state": payload.billingAddress.state) if payload.billingAddress.state != null,
+    ("postalCode": payload.billingAddress.postalCode) if payload.billingAddress.postalCode != null,
+	("country": payload.billingAddress.country) if payload.billingAddress.country != null    
+  },
+  "shippingAddress": {
+    ("street": payload.shippingAddress.street) if payload.shippingAddress.street != null,
+    ("city": payload.shippingAddress.city) if payload.shippingAddress.city != null,
+    ("state": payload.shippingAddress.state) if payload.shippingAddress.state != null,
+    ("postalCode": payload.shippingAddress.postalCode) if payload.shippingAddress.postalCode != null,
+    ("country": payload.shippingAddress.country) if payload.shippingAddress.country != null  
+  }
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<try doc:name="Try" doc:id="8bc78d95-cb74-4049-a99d-3b71dab120d9" >
+				<account-sfdcsystem-api:get-accounts doc:name="Get account from system B by name" doc:id="40ef7d9d-bfbc-4955-81c4-239e4ee4f4e8" config-ref="Account_SFDC_System_B_API_Config" name="#[payload.name]" target="accountsInB"/>
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ee9927b4-c9cf-429e-a730-9ba7765d5529" type="ANY">
+						<logger level="WARN" doc:name="Logger" doc:id="39b4f252-bca0-48c7-b5c6-cdac684b0e76" message="#[payload]" category="**EXCEPTION**LOGGER**"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+			<choice doc:name="Does Account Exist?" doc:id="381d1fde-0f48-45c3-88b7-661c4b76a0c3">
+				<when expression="#[not isEmpty(vars.accountsInB)]">
+					<account-sfdcsystem-api:update-account-by-id doc:name="Update account by id in system B" doc:id="0151cb62-f54a-4770-9c1a-8075f1a9404c" config-ref="Account_SFDC_System_B_API_Config" id="#[vars.accountsInB[0].id]">
+						<account-sfdcsystem-api:update-account-by-id-request-data ><![CDATA[#[vars.dataForUpsert]]]></account-sfdcsystem-api:update-account-by-id-request-data>
+					</account-sfdcsystem-api:update-account-by-id>
+				</when>
+				<otherwise>
+					<account-sfdcsystem-api:create-account doc:name="Create account in system B" doc:id="60ccda92-90d4-4d89-a32b-7a4109f75a1d" config-ref="Account_SFDC_System_B_API_Config" >
+						<account-sfdcsystem-api:create-account-request-data ><![CDATA[#[vars.dataForUpsert]]]></account-sfdcsystem-api:create-account-request-data>
+					</account-sfdcsystem-api:create-account>
+				</otherwise>
+			</choice>
+		</foreach>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="6c9cccca-68e1-4a27-b149-b81d4b92a079" doc:name="Prepare response JSON">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "Accounts were successfully migrated."
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>
