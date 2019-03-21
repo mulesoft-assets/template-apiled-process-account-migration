@@ -22,7 +22,7 @@
                 <version>${mule.maven.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <classifier>mule-application</classifier>
+                    <classifier>mule-application-template</classifier>
                 </configuration>
             </plugin>
         </plugins>
