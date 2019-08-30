@@ -8,32 +8,33 @@ schemas:
 
 traits: !include ./traits/trait-collection.yaml
 
-/migrateAccounts:
-  displayName: migrateAccounts
-  post:
-    description: |
-      Migrate accounts from A instance to B instance
-    queryParameters: 
-      name:
-        displayName: The account name
-        minLength: 0
-        maxLength: 255
-      modifiedAfter:
-        displayName: Only those modified after this date
-        minLength: 23
-        maxLength: 29
-        example: 2016-03-24T14:00:00.000+01:00
-      modifiedBefore:
-        displayName: Only those modified before this date
-        minLength: 23
-        maxLength: 29
-        example: 2016-03-24T14:00:00.000+01:00
-    responses:
-      201:
-        description: Migrated
-        body:
-          application/json:
-            example: |
-              {
-                "message": "Accounts were successfully migrated."
-              }
+/accounts:
+  /migrations:
+    displayName: Migrate accounts
+    post:
+      description: |
+        Migrate accounts from A instance to B instance
+      queryParameters: 
+        name:
+          displayName: The account name
+          minLength: 0
+          maxLength: 255
+        modifiedAfter:
+          displayName: Only those modified after this date
+          minLength: 23
+          maxLength: 29
+          example: 2016-03-24T14:00:00.000+01:00
+        modifiedBefore:
+          displayName: Only those modified before this date
+          minLength: 23
+          maxLength: 29
+          example: 2016-03-24T14:00:00.000+01:00
+      responses:
+        201:
+          description: Migrated
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Accounts were successfully migrated."
+                }

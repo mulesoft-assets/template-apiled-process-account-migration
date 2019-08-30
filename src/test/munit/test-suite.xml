@@ -122,7 +122,7 @@ vars.createdIds + payload.id]]></ee:set-variable>
         <munit:enable-flow-sources >
 			<munit:enable-flow-source value="account-migration-process-api-main" />
 			<munit:enable-flow-source value="account-migration-process-api-console" />
-			<munit:enable-flow-source value="post:\migrateAccounts:account-migration-process-api-config" />
+			<munit:enable-flow-source value="post:\accounts-migrations:account-migration-process-api-config" />
 		</munit:enable-flow-sources>
 		<munit:execution>
             <scripting:execute engine="groovy"
@@ -131,7 +131,7 @@ vars.createdIds + payload.id]]></ee:set-variable>
             </scripting:execute>
             <http:request method="POST"
                 doc:name="Migrate test data for insert" doc:id="ab7b8a96-3117-4ff4-801e-f5a861c4f49a"
-                config-ref="HTTP_Request_configuration" path="/migrateAccounts">
+                config-ref="HTTP_Request_configuration" path="/accounts/migrations">
                 <http:query-params><![CDATA[#[output application/java
 ---
 {
@@ -144,7 +144,7 @@ vars.createdIds + payload.id]]></ee:set-variable>
             </scripting:execute>
             <http:request method="POST"
                 doc:name="Migrate test data for update" doc:id="36086a77-861a-48a3-bf11-8b3b3a6e6ae4"
-                config-ref="HTTP_Request_configuration" path="/migrateAccounts">
+                config-ref="HTTP_Request_configuration" path="/accounts/migrations">
                 <http:query-params><![CDATA[#[output application/java
 ---
 {

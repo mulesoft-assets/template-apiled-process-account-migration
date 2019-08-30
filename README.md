@@ -27,7 +27,7 @@ This Template incorporate the System APIs, first for fetching Accounts from sour
 
 Below are the endpoints that are implemented.
 
-### POST /migrateAccounts
+### POST /accounts/migrations
 This endpoint will trigger migration of Accounts from source instance(A) to destination instance(B) using API Led Connectivity System API. Implementation supports filtering of accounts by name only.
 
 Look at the included self-descriptive RAML definition and the corresponding flows to learn more about the flows.

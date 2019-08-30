@@ -133,7 +133,7 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-	<flow name="post:\migrateAccounts:account-migration-process-api-config">
+	<flow name="post:\accounts-migrations:account-migration-process-api-config">
 		<account-sfdcsystem-api:get-accounts doc:name="Get account from system A by name" doc:id="556b348a-0847-482a-a51e-b2d2d05ce6dc" config-ref="Account_SFDC_System_A_API_Config" name="#[attributes.queryParams.name]" />
 		<foreach doc:name="For Each Account in system A" doc:id="91f00bae-1849-4dba-a3f6-0079367f2e21" collection="#[payload]">
 			<ee:transform doc:name="Remove unused and null items" doc:id="939085f5-20fb-4ce8-bdde-1a7e2e14a72c">
