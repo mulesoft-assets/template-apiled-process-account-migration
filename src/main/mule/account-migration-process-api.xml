@@ -15,10 +15,10 @@ http://www.mulesoft.org/schema/mule/account-salesforce-system-api http://www.mul
         <http:listener-connection host="0.0.0.0" port="${http.port}" />
     </http:listener-config>
     <apikit:config name="account-migration-process-api-config" raml="account-migration-process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" api="api/template-apiled-process-account-migration.raml"/>
-	<account-salesforce-system-api:config name="Account_SFDC_System_A_API_Config" doc:name="Account SFDC System API Config" doc:id="ed13d5d7-75f4-4266-9615-5f0ba7f37907" property_host="${system.api.a.domain}" property_port="${system.api.a.http.port}" property_basePath="${system.api.a.basePath}" property_protocol="${system.api.a.protocol}" >
+	<account-salesforce-system-api:config name="Account_SFDC_System_A_API_Config" doc:name="Account SFDC System A API Config" doc:id="ed13d5d7-75f4-4266-9615-5f0ba7f37907" property_host="${system.api.a.domain}" property_port="${system.api.a.http.port}" property_basePath="${system.api.a.basePath}" property_protocol="${system.api.a.protocol}" >
 			<account-salesforce-system-api:connection />
 	</account-salesforce-system-api:config>
-	<account-salesforce-system-api:config name="Account_SFDC_System_B_API_Config" doc:name="Account SFDC System API Config" doc:id="1810ef55-3595-4199-974e-d0ab46066090" property_host="${system.api.b.domain}" property_port="${system.api.b.http.port}" property_basePath="${system.api.b.basePath}" property_protocol="${system.api.b.protocol}" >
+	<account-salesforce-system-api:config name="Account_SFDC_System_B_API_Config" doc:name="Account SFDC System B API Config" doc:id="1810ef55-3595-4199-974e-d0ab46066090" property_host="${system.api.b.domain}" property_port="${system.api.b.http.port}" property_basePath="${system.api.b.basePath}" property_protocol="${system.api.b.protocol}" >
 		<account-salesforce-system-api:connection />
 	</account-salesforce-system-api:config>
 	<flow name="account-migration-process-api-main">

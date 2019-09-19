@@ -136,11 +136,11 @@ vars.createdIds + payload.id]]></ee:set-variable>
 					<ee:set-variable variableName="modifiedBefore" ><![CDATA[%dw 2.0
 output text/plain
 ---
-(now() as DateTime) >> |+00:00|]]></ee:set-variable>
+(now() as LocalDateTime)]]></ee:set-variable>
 					<ee:set-variable variableName="modifiedAfter" ><![CDATA[%dw 2.0
 output text/plain
 ---
-((now() - |PT5M|) as DateTime) >> |+00:00|]]></ee:set-variable>
+((now() - |PT5M|) as LocalDateTime)]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 			<http:request method="POST"
