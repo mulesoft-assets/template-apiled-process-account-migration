@@ -195,9 +195,9 @@ vars.createdIds + vars.insertedAccountB[0].id]]></ee:set-variable>
         </munit:validation>
     </munit:test>
 	<munit:after-test name="test-suiteAfter_Test" description="After tests actions" doc:id="f374ab71-f1e9-4f37-8566-b11534f166af" >
-		<account-salesforce-system-api:delete-account-by-id doc:name="Delete account by id" doc:id="cbea7c10-f627-4459-908c-e72caa88544a" config-ref="Account_SFDC_System_A_API_Config" id="#[vars.createdIds[0]]"/>
-		<account-salesforce-system-api:delete-account-by-id doc:name="Delete account by id" doc:id="80bca4ea-97dd-4284-b886-f1d6503057d1" config-ref="Account_SFDC_System_A_API_Config" id="#[vars.createdIds[1]]"/>
-		<account-salesforce-system-api:delete-account-by-id doc:name="Delete account by id" doc:id="3ac930b5-77d6-4087-8031-0e8f7c4a3862" config-ref="Account_SFDC_System_B_API_Config" id="#[vars.createdIds[2]]"/>
-		<account-salesforce-system-api:delete-account-by-id doc:name="Delete account by id" doc:id="b4619870-7e4d-45b3-afbd-de5d3a9cde76" config-ref="Account_SFDC_System_B_API_Config" id="#[vars.createdIds[3]]"/>  
+		<account-salesforce-system-api:delete-account-by-id doc:name="Delete created account from A" doc:id="cbea7c10-f627-4459-908c-e72caa88544a" config-ref="Account_SFDC_System_A_API_Config" id="#[vars.createdIds[0]]"/>
+		<account-salesforce-system-api:delete-account-by-id doc:name="Delete created account by id from A" doc:id="80bca4ea-97dd-4284-b886-f1d6503057d1" config-ref="Account_SFDC_System_A_API_Config" id="#[vars.createdIds[1]]"/>
+		<account-salesforce-system-api:delete-account-by-id doc:name="Delete created account from B" doc:id="3ac930b5-77d6-4087-8031-0e8f7c4a3862" config-ref="Account_SFDC_System_B_API_Config" id="#[vars.createdIds[2]]"/>
+		<account-salesforce-system-api:delete-account-by-id doc:name="Delete created account by id from B" doc:id="b4619870-7e4d-45b3-afbd-de5d3a9cde76" config-ref="Account_SFDC_System_B_API_Config" id="#[vars.createdIds[3]]"/>  
 	</munit:after-test>
 </mule>
