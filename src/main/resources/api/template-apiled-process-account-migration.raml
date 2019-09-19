@@ -1,16 +1,14 @@
-#%RAML 0.8
-baseUri: https://mocksvc.mulesoft.com/mocks/fa3b0b5a-13db-4299-b028-9ac0a77288d1 # 
-title: Process API
-version: v1.0
+#%RAML 1.0
+title: Account Migration Process API
+version: v2.0
+baseUri: http://localhost:8081/api
 
-schemas:
-  - account: !include schemas/account_schema.json
-
-traits: !include ./traits/trait-collection.yaml
+types:
+  errorResponse: !include dataTypes/ErrorResponse.raml
 
 /migrateAccounts:
-  displayName: migrateAccounts
   post:
+    displayName: Migrate accounts 
     description: |
       Migrate accounts from A instance to B instance
     queryParameters: 
@@ -33,6 +31,7 @@ traits: !include ./traits/trait-collection.yaml
         description: Migrated
         body:
           application/json:
+            type: errorResponse
             example: |
               {
                 "message": "Accounts were successfully migrated."

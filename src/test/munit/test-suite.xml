@@ -2,7 +2,7 @@
 
 <mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
     xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-    xmlns:account-sfdcsystem-api="http://www.mulesoft.org/schema/mule/account-sfdcsystem-api"
+    xmlns:account-salesforce-system-api="http://www.mulesoft.org/schema/mule/account-salesforce-system-api"
     xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
     xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
@@ -12,7 +12,7 @@
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/account-sfdcsystem-api http://www.mulesoft.org/schema/mule/account-sfdcsystem-api/current/mule-account-sfdcsystem-api.xsd
+http://www.mulesoft.org/schema/mule/account-salesforce-system-api http://www.mulesoft.org/schema/mule/account-salesforce-system-api/current/mule-account-salesforce-system-api.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
     <munit:config name="test-suite.xml" />
@@ -24,7 +24,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         <http:request-connection host="${api.domain}"
             port="${http.port}" />
     </http:request-config>
-    <munit:before-test name="test-suiteBefore_Test"
+	<munit:before-test name="test-suiteBefore_Test"
         description="Before tests actions" doc:id="421baef7-03b0-4c2c-b9e2-d8009e03f2bc">
         <set-variable value="#[uuid()[0 to 7]]" doc:name="Set Variable randomId"
             doc:id="da2abdad-e3a9-4512-9ecd-6c6ba5e01050" variableName="randomId" />
@@ -71,11 +71,11 @@ output application/json
 }]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <account-sfdcsystem-api:create-account
+        <account-salesforce-system-api:create-account
             doc:name="Create test account for insert in system A"
             doc:id="751d2fd3-4eeb-45db-9c50-f68033a1f7aa" config-ref="Account_SFDC_System_A_API_Config">
-            <account-sfdcsystem-api:create-account-request-data><![CDATA[#[vars.testDataForInsert]]]></account-sfdcsystem-api:create-account-request-data>
-        </account-sfdcsystem-api:create-account>
+            <account-salesforce-system-api:create-account-request-data><![CDATA[#[vars.testDataForInsert]]]></account-salesforce-system-api:create-account-request-data>
+        </account-salesforce-system-api:create-account>
 		<ee:transform doc:name="Store created ID" doc:id="1d9cbb52-c89d-448f-b357-9d4a741678d5" >
 			<ee:message >
 			</ee:message>
@@ -86,11 +86,11 @@ output application/json
 [payload.id]]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<account-sfdcsystem-api:create-account
+		<account-salesforce-system-api:create-account
             doc:name="Create test account for update in system A"
             doc:id="9c0eddbc-730d-4ffd-ac85-8f6c07a3fdd4" config-ref="Account_SFDC_System_A_API_Config">
-            <account-sfdcsystem-api:create-account-request-data><![CDATA[#[vars.testDataForUpdate - "billingAddress" ++ vars.addressToChange]]]></account-sfdcsystem-api:create-account-request-data>
-        </account-sfdcsystem-api:create-account>
+            <account-salesforce-system-api:create-account-request-data><![CDATA[#[vars.testDataForUpdate - "billingAddress" ++ vars.addressToChange]]]></account-salesforce-system-api:create-account-request-data>
+        </account-salesforce-system-api:create-account>
         <ee:transform doc:name="Store created ID" doc:id="aa2e3c66-4df2-4d35-af4d-1987fda7cf82" >
 			<ee:message >
 			</ee:message>
@@ -101,11 +101,11 @@ output application/json
 vars.createdIds + payload.id]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<account-sfdcsystem-api:create-account
+		<account-salesforce-system-api:create-account
             doc:name="Create test account for update in system B"
             doc:id="f3074c0a-2a53-40ce-bb12-f661faee288a" config-ref="Account_SFDC_System_B_API_Config">
-            <account-sfdcsystem-api:create-account-request-data><![CDATA[#[vars.testDataForUpdate]]]></account-sfdcsystem-api:create-account-request-data>
-        </account-sfdcsystem-api:create-account>
+            <account-salesforce-system-api:create-account-request-data><![CDATA[#[vars.testDataForUpdate]]]></account-salesforce-system-api:create-account-request-data>
+        </account-salesforce-system-api:create-account>
         <ee:transform doc:name="Store created ID" doc:id="ae793e85-861d-42f3-95e8-bae326254419">
 			<ee:message>
 			</ee:message>
@@ -129,13 +129,29 @@ vars.createdIds + payload.id]]></ee:set-variable>
                 doc:name="Sleep for 10 seconds" doc:id="49a9e69e-881e-4fe8-9fcd-475b0feeaca5">
                 <scripting:code>sleep(10000)</scripting:code>
             </scripting:execute>
-            <http:request method="POST"
+            <ee:transform doc:name="Set required Dates parameters" doc:id="80654ce7-8cfe-483e-97b0-50d24064a807" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="modifiedBefore" ><![CDATA[%dw 2.0
+output text/plain
+---
+(now() as DateTime) >> |+00:00|]]></ee:set-variable>
+					<ee:set-variable variableName="modifiedAfter" ><![CDATA[%dw 2.0
+output text/plain
+---
+((now() - |PT5M|) as DateTime) >> |+00:00|]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<http:request method="POST"
                 doc:name="Migrate test data for insert" doc:id="ab7b8a96-3117-4ff4-801e-f5a861c4f49a"
                 config-ref="HTTP_Request_configuration" path="/migrateAccounts">
                 <http:query-params><![CDATA[#[output application/java
 ---
 {
-	"name" : vars.testDataForInsert.name
+	"modifiedBefore" : vars.modifiedBefore,
+	"name" : vars.testDataForInsert.name,
+	"modifiedAfter" : vars.modifiedAfter
 }]]]></http:query-params>
             </http:request>
             <scripting:execute engine="groovy"
@@ -148,15 +164,17 @@ vars.createdIds + payload.id]]></ee:set-variable>
                 <http:query-params><![CDATA[#[output application/java
 ---
 {
-	"name" : vars.testDataForUpdate.name
+	"name" : vars.testDataForUpdate.name,
+	"modifiedBefore" : vars.modifiedBefore,
+	"modifiedAfter" : vars.modifiedAfter
 }]]]></http:query-params>
             </http:request>
             <scripting:execute engine="groovy"
                 doc:name="Sleep for 10 seconds" doc:id="0c999a37-a50f-4ed0-bccb-19a5ceec5f1c">
                 <scripting:code>sleep(10000)</scripting:code>
             </scripting:execute>
-			<account-sfdcsystem-api:get-accounts doc:name="Get inserted B account" doc:id="414a3a6a-fe1e-49e8-b915-9123fdfbbcb7" config-ref="Account_SFDC_System_B_API_Config" name="#[vars.testDataForInsert.name]" target="insertedAccountB" />
-			<account-sfdcsystem-api:get-accounts doc:name="Get updated B account" doc:id="4f78ce6e-52f2-48f4-b926-9b0bcc2ba19d" config-ref="Account_SFDC_System_B_API_Config" name="#[vars.testDataForUpdate.name]" target="updatedAccountB" />
+			<account-salesforce-system-api:get-accounts doc:name="Get inserted B account" doc:id="414a3a6a-fe1e-49e8-b915-9123fdfbbcb7" config-ref="Account_SFDC_System_B_API_Config" name="#[vars.testDataForInsert.name]" target="insertedAccountB" />
+			<account-salesforce-system-api:get-accounts doc:name="Get updated B account" doc:id="4f78ce6e-52f2-48f4-b926-9b0bcc2ba19d" config-ref="Account_SFDC_System_B_API_Config" name="#[vars.testDataForUpdate.name]" target="updatedAccountB" />
 			<ee:transform doc:name="Store ID" doc:id="ed6b0560-5135-4940-9ab4-293ed87cb6bb" >
 				<ee:message >
 				</ee:message>
@@ -177,9 +195,9 @@ vars.createdIds + vars.insertedAccountB[0].id]]></ee:set-variable>
         </munit:validation>
     </munit:test>
 	<munit:after-test name="test-suiteAfter_Test" description="After tests actions" doc:id="f374ab71-f1e9-4f37-8566-b11534f166af" >
-		<account-sfdcsystem-api:delete-account-by-id doc:name="Delete account by id" doc:id="cbea7c10-f627-4459-908c-e72caa88544a" config-ref="Account_SFDC_System_A_API_Config" id="#[vars.createdIds[0]]"/>
-		<account-sfdcsystem-api:delete-account-by-id doc:name="Delete account by id" doc:id="80bca4ea-97dd-4284-b886-f1d6503057d1" config-ref="Account_SFDC_System_A_API_Config" id="#[vars.createdIds[1]]"/>
-		<account-sfdcsystem-api:delete-account-by-id doc:name="Delete account by id" doc:id="3ac930b5-77d6-4087-8031-0e8f7c4a3862" config-ref="Account_SFDC_System_B_API_Config" id="#[vars.createdIds[2]]"/>
-		<account-sfdcsystem-api:delete-account-by-id doc:name="Delete account by id" doc:id="b4619870-7e4d-45b3-afbd-de5d3a9cde76" config-ref="Account_SFDC_System_B_API_Config" id="#[vars.createdIds[3]]"/>  
+		<account-salesforce-system-api:delete-account-by-id doc:name="Delete account by id" doc:id="cbea7c10-f627-4459-908c-e72caa88544a" config-ref="Account_SFDC_System_A_API_Config" id="#[vars.createdIds[0]]"/>
+		<account-salesforce-system-api:delete-account-by-id doc:name="Delete account by id" doc:id="80bca4ea-97dd-4284-b886-f1d6503057d1" config-ref="Account_SFDC_System_A_API_Config" id="#[vars.createdIds[1]]"/>
+		<account-salesforce-system-api:delete-account-by-id doc:name="Delete account by id" doc:id="3ac930b5-77d6-4087-8031-0e8f7c4a3862" config-ref="Account_SFDC_System_B_API_Config" id="#[vars.createdIds[2]]"/>
+		<account-salesforce-system-api:delete-account-by-id doc:name="Delete account by id" doc:id="b4619870-7e4d-45b3-afbd-de5d3a9cde76" config-ref="Account_SFDC_System_B_API_Config" id="#[vars.createdIds[3]]"/>  
 	</munit:after-test>
 </mule>
