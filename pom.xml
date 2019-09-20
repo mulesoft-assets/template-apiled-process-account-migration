@@ -104,4 +104,4 @@
             <layout>default</layout>
         </repository>
     </repositories>
-</project>
+<scm><connection>scm:git:git@github.com:mulesoft/template-apiled-process-account-migration.git</connection><developerConnection>scm:git:git@github.com:mulesoft/template-apiled-process-account-migration.git</developerConnection><url>https://github.com/mulesoft/template-apiled-process-account-migration</url><tag>HEAD</tag></scm></project>
