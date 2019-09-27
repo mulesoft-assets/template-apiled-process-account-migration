@@ -82,9 +82,9 @@
             <classifier>mule-plugin</classifier>
             <scope>test</scope>            
         </dependency>
-    		<dependency>
+    	<dependency>
             <groupId>org.mule.templates</groupId>
-            <artifactId>mule-plugin-apiled-template-account-salesforce-system-api</artifactId>
+            <artifactId>mule-plugin-apiled-template-account-system-api</artifactId>
             <version>2.0.0</version>
             <classifier>mule-plugin</classifier>
         </dependency>
@@ -104,4 +104,10 @@
             <layout>default</layout>
         </repository>
     </repositories>
-<scm><connection>scm:git:git@github.com:mulesoft/template-apiled-process-account-migration.git</connection><developerConnection>scm:git:git@github.com:mulesoft/template-apiled-process-account-migration.git</developerConnection><url>https://github.com/mulesoft/template-apiled-process-account-migration</url><tag>HEAD</tag></scm></project>
+<scm>
+        <connection>scm:git:git@github.com:mulesoft/template-apiled-process-account-migration.git</connection>
+        <developerConnection>scm:git:git@github.com:mulesoft/template-apiled-process-account-migration.git</developerConnection>
+        <url>https://github.com/mulesoft/template-apiled-process-account-migration</url>
+        <tag>HEAD</tag>
+    </scm>
+</project>
