@@ -89,6 +89,7 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 **APIs configuration**
 
 + api.basePath `/api`
++ api.domain `localhost`
 + console.basePath `/console`
 
 + system.api.a.domain `your-source-a-system-api.cloudhub.io`
